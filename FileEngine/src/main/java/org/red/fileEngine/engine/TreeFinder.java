@@ -11,14 +11,14 @@ import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class TreeFinder {
+class TreeFinder {
 
 	List<Path> find(Path rootPath, String mask) throws IOException {
 		return find(rootPath, mask, Integer.MAX_VALUE);
 	}
 
 	// TODO: should i except the root?
-	public List<Path> find(Path rootPath, String mask, int depth) throws IOException {
+	List<Path> find(Path rootPath, String mask, int depth) throws IOException {
 		List<Path> files = new LinkedList<Path>();
 		find(rootPath, mask, depth, files);
 		return files;

@@ -1,20 +1,17 @@
 package org.red.fileEngine.client;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import org.red.fileEngine.engine.FindEngine;
-import org.red.fileEngine.engine.TreeFinder;
 
 public abstract class ConsoleClient {
+	final static FindEngine ENGINE = new FindEngine();
+	
 	private final static String DELIMITER = " ";
 	private final static String EXIT_CODE = "exit";
-
 	final void run() {
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("started");
