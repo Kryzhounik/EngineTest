@@ -22,7 +22,13 @@ class GlobPatternPredicate implements Predicate<Path>{
 			FileSystem fs = path.getFileSystem();
 			matcher = fs.getPathMatcher("glob:" + mask);
 		}
-		return matcher.matches(path.getFileName());
+		Path filename = path.getFileName();
+		if (filename != null) {
+			return matcher.matches(filename);
+		} else {
+			return false; // logical disk case
+		}
+		
 	}
 	
 }
