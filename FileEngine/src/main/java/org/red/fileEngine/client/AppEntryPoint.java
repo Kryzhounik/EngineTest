@@ -1,14 +1,18 @@
 package org.red.fileEngine.client;
 
+import java.io.IOException;
+
 public class AppEntryPoint {
 	//TODO: java.nio.file.AccessDeniedException for some directories
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		System.out.println("starting...");
-		
-		//could be added some other way to switch between options
-		//ConsoleClient client = new SyncClient();
-		ConsoleClient client = new AsyncClient();
+		Client client;
+		if (args.length == 2) {
+			client = new SocketClient(args[0], args[1]);
+		} else {
+			client = new ConsoleClient();
+		}
 		client.run();
 		System.out.println("stoped");
 	}
