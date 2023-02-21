@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.red</groupId>
 	<artifactId>FileEngine</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>FileEngine</name>
 	<properties>
 		<maven.compiler.source>15</maven.compiler.source>
