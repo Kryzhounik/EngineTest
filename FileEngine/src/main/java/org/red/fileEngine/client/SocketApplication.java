@@ -25,6 +25,7 @@ class SocketApplication implements Application{
 	
 	@Override
 	public void start() {
+		BehaviorStrategy.setPath(path);
 		System.out.println("started");
 		while(true) {
 			Socket socket;
@@ -32,8 +33,7 @@ class SocketApplication implements Application{
 				socket = serverSocket.accept();
 				InputStream in = socket.getInputStream();
 				OutputStream out = socket.getOutputStream();
-				Client client = new Client(out, in);
-				client.setPath(path);
+				Client client = new Client(out, in, BehaviorStrategy.SYNC_CACHED);
 				CLIENT_EXECUTOR.execute(client::run);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

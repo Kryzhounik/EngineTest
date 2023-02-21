@@ -14,24 +14,35 @@ public class FolderImpl implements Folder {
 
 	@Override
 	public List<Path> getFilesBy(String mask, int depth) {
-		List<String> result = new LinkedList<>();
-		for (int i = 0; i <= depth; i++) {
+		List<Path> result = new LinkedList<>();
+		for (int i = 1; i <= depth; i++) {
 			Level lvl = map.get(i);
-			List<String> lvlResult = lvl.getFilesBy(mask);
+			List<Path> lvlResult = lvl.getFilesBy(mask);
 			result.addAll(lvlResult);
 		}
-		return null;
+		return result;
+	}
+
+	@Override
+	public void add(Path path, int level) {
+		Level lvl = map.computeIfAbsent(level, l -> new Level());
+		lvl.add(path);
 	}
 
 	private final class Level{
-		Collection<Path> paths;
-		public List<String> getFilesBy(String mask) {
+		private Collection<Path> paths = new LinkedList<>();
+		public List<Path> getFilesBy(String mask) {
 			Predicate<? super Path> predicate = new GlobPatternPredicate(mask);
-			List<String> result = paths.stream()
+			List<Path> result = paths.stream()
 				.filter(predicate)
-				.map(Object::toString)
+				//.map(Object::toString)
 				.collect(Collectors.toList());
 			return result;
+		}
+		
+		public void add(Path path) {
+			paths.add(path);
+			
 		}
 	}
 }

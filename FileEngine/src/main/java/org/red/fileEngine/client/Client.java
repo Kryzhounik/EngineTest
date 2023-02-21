@@ -16,9 +16,7 @@ final class Client {
 	private final PrintStream out;
 	private final InputStream in;
 	private final BehaviorStrategy strategy;
-	
-	private Path path;
-	
+		
 	final static String EXIT_CODE = "exit";
 
 	Client(OutputStream out, InputStream in) {
@@ -34,7 +32,7 @@ final class Client {
 
 	final void run() {
 		String notification = "enter parameters by space\r\n[core mask depth]:";
-		if (path != null) {
+		if (strategy.equals(BehaviorStrategy.SYNC_CACHED)) {
 			notification = notification.replace("core ", "");
 		}
 		
@@ -53,14 +51,6 @@ final class Client {
 			}
 		}
 		scanner.close();
-	}
-
-	final Path getPath() {
-		return path;
-	}
-
-	final void setPath(Path path) {
-		this.path = path;
 	}
 
 	private String find(InputTouple touple) throws IOException, InterruptedException {
@@ -87,7 +77,7 @@ final class Client {
 	private InputTouple validateInput(String input) throws IllegalInputException {
 		int expectedCount = 3;
 		int index = 0;
-		if (path != null) {
+		if (strategy.equals(BehaviorStrategy.SYNC_CACHED)) {
 			expectedCount--;
 			index--;
 		}
@@ -98,7 +88,7 @@ final class Client {
 			throw new IllegalInputException("exceed number of input parameters");
 		}
 
-		Path path = this.path;
+		Path path = BehaviorStrategy.getPath();
 		try {
 			path = Path.of(params[index]);
 		} catch (InvalidPathException e) {
