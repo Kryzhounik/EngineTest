@@ -11,13 +11,17 @@ import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+//for current purposes could be turned to util class, but dynamic is more flexible
 class TreeFinder {
 
+	List<Path> find(Path rootPath) throws IOException {
+		return find(rootPath, "*", Integer.MAX_VALUE);
+	}
+	
 	List<Path> find(Path rootPath, String mask) throws IOException {
 		return find(rootPath, mask, Integer.MAX_VALUE);
 	}
 
-	// TODO: should i except the root?
 	List<Path> find(Path rootPath, String mask, int depth) throws IOException {
 		List<Path> files = new LinkedList<Path>();
 		find(rootPath, mask, depth, files);
@@ -26,7 +30,9 @@ class TreeFinder {
 
 	void find(Path rootPath, String mask, int depth, Collection<Path> collection) throws IOException {
 		Predicate<? super Path> predicate = new GlobPatternPredicate(mask);
-		Files.walk(rootPath, depth).filter(predicate).forEach(collection::add);
+		Files.walk(rootPath, depth)
+			.filter(predicate)
+			.forEach(collection::add);
 	}
 
 }

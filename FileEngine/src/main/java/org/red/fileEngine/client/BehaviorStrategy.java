@@ -8,13 +8,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 import org.red.fileEngine.client.Client.InputTouple;
-import org.red.fileEngine.engine.FindEngine;
+import org.red.fileEngine.engine.NewFindEngine;
 
 enum BehaviorStrategy {
 	SYNC {
 		String process(InputTouple touple, PrintStream out) throws IOException {
 			List<Path> result = ENGINE.findSync(touple.core, touple.mask, touple.depth);
-			String resultStr = result.stream().map(Path::toString).collect(Collectors.joining("\n", "\n", "\n"));
+			String resultStr = result.stream()
+					.map(Path::toString)
+					.collect(Collectors.joining("\n", "\n", "\n"));
 			out.println(resultStr);
 			return FINISH_MARKER;
 		}
@@ -30,7 +32,7 @@ enum BehaviorStrategy {
 			LinkedBlockingQueue<Path> queue = ENGINE.findAsync(touple.core, touple.mask, touple.depth);
 			while (true) {
 				Path p = queue.take();
-				if (p == FindEngine.POISON_PILL) {
+				if (p == NewFindEngine.POISON_PILL) {
 					break;
 				}
 				out.println(p);
@@ -39,8 +41,8 @@ enum BehaviorStrategy {
 		}
 	};
 
-	private final static FindEngine ENGINE = new FindEngine();
-	
+	private final static NewFindEngine ENGINE = new NewFindEngine();
+
 	final static String FINISH_MARKER = "finished";
 
 	abstract String process(InputTouple touple, PrintStream out) throws IOException, InterruptedException;
