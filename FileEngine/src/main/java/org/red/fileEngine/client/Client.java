@@ -9,13 +9,15 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Scanner;
 
-class Client {
+final class Client {
 
 	private final static String DELIMITER = " ";
 
 	private final PrintStream out;
 	private final InputStream in;
 	private final BehaviorStrategy strategy;
+	
+	private Path path;
 	
 	final static String EXIT_CODE = "exit";
 
@@ -29,14 +31,19 @@ class Client {
 		this.strategy = strategy;
 	}
 
-	//TODO:final
-	void run() {
+
+	final void run() {
+		String notification = "enter parameters by space\r\n[core mask depth]:";
+		if (path != null) {
+			notification = notification.replace("core ", "");
+		}
+		
 		Scanner scanner = new Scanner(in, "utf-8");
 		out.println("started");
 		while (true) {
 			// hope there is no case for mask (and core path) with spaces. it could be extra
 			// requirement but still
-			out.println("enter parameters by space\r\n[core mask depth]:");
+			out.println(notification);
 			String input = scanner.nextLine();
 			if (!EXIT_CODE.equals(input.toLowerCase())) {
 				String responce = operate(input);
@@ -46,6 +53,14 @@ class Client {
 			}
 		}
 		scanner.close();
+	}
+
+	final Path getPath() {
+		return path;
+	}
+
+	final void setPath(Path path) {
+		this.path = path;
 	}
 
 	private String find(InputTouple touple) throws IOException, InterruptedException {
@@ -68,31 +83,43 @@ class Client {
 
 	}
 
+	//slightly tricky according to nesesarity(?) validate different number of input params.
 	private InputTouple validateInput(String input) throws IllegalInputException {
+		int expectedCount = 3;
+		int index = 0;
+		if (path != null) {
+			expectedCount--;
+			index--;
+		}
+		
+		
 		String[] params = input.split(DELIMITER);
-		if (params.length > 3) {
+		if (params.length > expectedCount) {
 			throw new IllegalInputException("exceed number of input parameters");
 		}
 
-		final Path path;
+		Path path = this.path;
 		try {
-			path = Path.of(params[0]);
+			path = Path.of(params[index]);
 		} catch (InvalidPathException e) {
 			throw new IllegalInputException("invalid core path " + e.getMessage());
+		} catch (IndexOutOfBoundsException e) {
+			//nothing. it means that path have already set up
 		}
 		if (!Files.exists(path)) {
 			throw new IllegalInputException("root path [" +path+ "] don't exist");
 		}
 
+		
 		String mask = null;
 		if (params.length > 1) {
-			mask = params[1];
+			mask = params[++index];
 		}
 
-		Integer depth = -1;
-		if (params.length > 2) {
+		Integer depth = Integer.MAX_VALUE;
+		if (params.length > expectedCount - 1) {
 			try {
-				depth = Integer.valueOf(params[2]);
+				depth = Integer.valueOf(params[++index]);
 			} catch (NumberFormatException e) {
 				throw new IllegalInputException("invalid depth " + e.getMessage());
 			}

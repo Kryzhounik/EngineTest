@@ -7,13 +7,13 @@ public class AppEntryPoint {
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println("starting...");
-		Client client;
+		Application app;
 		if (args.length == 2) {
-			client = new SocketClient(args[0], args[1]);
+			app = new SocketApplication(args[0], args[1]);
 		} else {
-			client = new ConsoleClient();
+			app = new ConsoleApplication();
 		}
-		client.run();
+		app.start();
 		System.out.println("stoped");
 	}
 

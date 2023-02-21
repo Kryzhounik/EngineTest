@@ -5,24 +5,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-class SocketClient extends Client{
+class SocketApplication implements Application{
 
 	//TODO: shareexecutors?
-	private final static ExecutorService EXECUTOR = Executors.newWorkStealingPool();
+	private final static ExecutorService CLIENT_EXECUTOR = Executors.newWorkStealingPool();
+	private final Path path;
 	
 	private final ServerSocket serverSocket; 
-	SocketClient(String port, String path) throws IOException {
-		//TODO:
-		super(null, null);
-		serverSocket = new ServerSocket(8089);
+	SocketApplication(String port, String path) throws IOException {
+		int portNum = Integer.valueOf(port);
+		serverSocket = new ServerSocket(portNum);
+		this.path = Path.of(path);
 	}
 	
 	@Override
-	void run() {
+	public void start() {
 		System.out.println("started");
 		while(true) {
 			Socket socket;
@@ -31,7 +33,8 @@ class SocketClient extends Client{
 				InputStream in = socket.getInputStream();
 				OutputStream out = socket.getOutputStream();
 				Client client = new Client(out, in);
-				EXECUTOR.execute(client::run);
+				client.setPath(path);
+				CLIENT_EXECUTOR.execute(client::run);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
