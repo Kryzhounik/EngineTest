@@ -18,7 +18,7 @@ import org.red.fileEngine.Resources;
 public class ClientTest {
 	@Test
 	// i simple copied one of the TreeFinder tests. it possible to implement it by running all cases from it thought Client
-	public void run() throws IOException, InterruptedException{
+	public void asycRun() throws IOException, InterruptedException{
 		
 		
 		PipedOutputStream out = new PipedOutputStream();
@@ -27,7 +27,7 @@ public class ClientTest {
 		PipedInputStream in = new PipedInputStream();
 		OutputStream testOut = new PipedOutputStream(in);	
 	
-		Client client = new Client(testOut, testIn);
+		Client client = new Client(testOut, testIn, BehaviorStrategy.ASYNC);
 		Executors.newSingleThreadExecutor().execute(client::run); 
 
 		PrintWriter writer = new PrintWriter(out);

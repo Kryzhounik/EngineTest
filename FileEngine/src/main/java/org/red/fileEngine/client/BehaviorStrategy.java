@@ -39,12 +39,6 @@ enum BehaviorStrategy {
 	@Deprecated
 	ASYNC {
 		String process(InputTouple touple, PrintStream out) throws IOException, InterruptedException {
-			// Unfortunately right now i see no way to iterate queue by stream with blocking
-//			Queue<Path> queue = engine.findAsync(touple.core, touple.mask, touple.depth);
-//			result.stream()
-//			.dropWhile(p -> p == FindEngine.POISON_PILL)
-//			.forEach(System.out::println);
-
 			BlockerablePathQueue queue = ENGINE.findAsync(touple.core, touple.mask, touple.depth);
 			queue.blockingforEach(out::println);
 			return FINISH_MARKER;

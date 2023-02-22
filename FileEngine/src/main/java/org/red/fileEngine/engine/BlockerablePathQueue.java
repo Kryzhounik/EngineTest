@@ -4,34 +4,40 @@ import java.nio.file.Path;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 //TODO: isn't best implementation.
 // it's better to implement by some "closed" flag, but it will be more complex implementation, so for my purposes this is enough
 public class BlockerablePathQueue {
 	private final static Path POISON_PILL = Path.of("UTIL", "POISON", "PILL", "PATH");
 
-	private final BlockingQueue<Path> delegate;;
-
+	private final BlockingQueue<Path> delegate;
 
 	BlockerablePathQueue(LinkedBlockingQueue<Path> delegate) {
 		super();
 		this.delegate = delegate;
 	}
 
-
-	//TODO: multithread
+	
 	public void blockingforEach(Consumer<Path> consumer) throws InterruptedException {
-		while (true) {
-			Path elem = delegate.take();
-			if (elem == POISON_PILL) {
-				break;
+		Stream<Path> pathStream = Stream.generate(() -> {
+			try {
+				return delegate.take();
+			} catch (InterruptedException e) {
+				//TODO:
+				e.printStackTrace();
+				return null;
 			}
-			consumer.accept(elem);
-		}
+		});
+		
+		pathStream
+			//TODO:
+			//.parallel()
+			.takeWhile(p -> p != POISON_PILL)
+			.forEach(consumer);
 	}
 
-
-	void close(){
+	void close() {
 		delegate.add(POISON_PILL);
 	}
 
